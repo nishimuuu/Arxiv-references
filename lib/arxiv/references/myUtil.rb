@@ -15,24 +15,24 @@ module ArxivUtil
     return Digest::SHA256.hexdigest Time.now.strftime("%F %H:%M:%S")
   end
 
-  def self.makeDir(id)
-    Dir.mkdir("/tmp/#{id}") 
+  def self.makeDir(id, work_dir)
+    Dir.mkdir("#{work_dir}/#{id}") 
   end
 
-  def self.removeDir(id)
-    FileUtils.rm_rf("/tmp/#{id}")
+  def self.removeDir(id, work_dir)
+    FileUtils.rm_rf("#{work_dir}/#{id}")
   end
 
-  def self.makeFile(id)
-    return "/tmp/#{id}/output.pdf"
+  def self.makeFile(id, work_dir)
+    return "#{work_dir}/#{id}/output.pdf"
   end
 
-  def self. getK2Pdf(id)
-    return "/tmp/#{id}/output_k2opt.pdf"
+  def self. getK2Pdf(id, work_dir)
+    return "#{work_dir}/#{id}/output_k2opt.pdf"
   end
 
 
-  def self.fetchFromUrl(urlName)
+  def self.fetchFromUrl(urlName, work_dir)
     puts "fetch => #{urlName}"
     charset = nil
     html = open(urlName) do |f|
@@ -46,19 +46,19 @@ module ArxivUtil
     result[:authors] = page.xpath('//*[@id="abs"]/div[2]/div[2]/a').text
     result[:abstruct] = page.xpath('//*[@id="abs"]/div[2]/blockquote').text
     result[:pdfurl] = "#{BASE_URL}#{page.xpath('//*[@id="abs"]/div[1]/div[1]/ul/li[1]/a').attr('href').value}"
-    result[:references] = fetchFromPdfUrl(result[:pdfurl]) 
+    result[:references] = fetchFromPdfUrl(result[:pdfurl], work_dir) 
     return result.to_json
   end
 
-  def self.fetchFromArxivId(id)
+  def self.fetchFromArxivId(id, work_dir)
     target_url = "#{BASE_URL}/abs/#{id}" 
-    fetchFromUrl(target_url)
+    fetchFromUrl(target_url, work_dir)
   end
 
-  def self.fetchFromPdfUrl(pdfUrl)
+  def self.fetchFromPdfUrl(pdfUrl, work_dir)
     job_id = makeId
-    makeDir(job_id)
-    file_name = makeFile(job_id)
+    makeDir(job_id, work_dir)
+    file_name = makeFile(job_id, work_dir)
 
     open(file_name, 'wb') do |o|
       open(pdfUrl) do |data|
@@ -78,7 +78,7 @@ module ArxivUtil
         break unless res.index('written').nil?
       end
     end
-    executed_pdf = getK2Pdf(job_id)
+    executed_pdf = getK2Pdf(job_id, work_dir)
     reader = PDF::Reader.new(executed_pdf)
     page_no = reader.
       pages.
@@ -106,7 +106,7 @@ module ArxivUtil
       select{|i|
       i.length > 5
     }
-    removeDir(job_id)
+    removeDir(job_id, work_dir)
     return references
   end
 end
