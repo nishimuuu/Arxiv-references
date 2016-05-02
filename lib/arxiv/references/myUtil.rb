@@ -47,7 +47,7 @@ module ArxivUtil
     result[:abstruct] = page.xpath('//*[@id="abs"]/div[2]/blockquote').text
     result[:pdfurl] = "#{BASE_URL}#{page.xpath('//*[@id="abs"]/div[1]/div[1]/ul/li[1]/a').attr('href').value}"
     result[:references] = fetchFromPdfUrl(result[:pdfurl]) 
-    puts result.to_json
+    return result.to_json
   end
 
   def self.fetchFromArxivId(id)
