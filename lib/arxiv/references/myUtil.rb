@@ -9,8 +9,8 @@ require 'nokogiri'
 require 'json'
 module ArxivUtil
   BASE_URL = "https://arxiv.org"
-  REFERENCE_START_REGEXP = /References|REFERENCES|Reference|REFERENCE/
-  REFERENCE_REGEXP = /(\[[0-9]?[0-9]\]|\[.+?\])/
+  REFERENCE_START_REGEXP = Regexp.new('References|REFERENCES|Reference|REFERENCE')
+  REFERENCE_REGEXP = Regexp.new('(\[[0-9]?[0-9]\]|\[.+?\])')
   def self.makeId
     return Digest::SHA256.hexdigest Time.now.strftime("%F %H:%M:%S")
   end
@@ -102,7 +102,7 @@ module ArxivUtil
       gsub('- ','').
       split("\n")
 
-    references = ref_page[(ref_page.index(REFERENCE_START_REGEXP)+1)..ref_page.length].
+    references = ref_page[(ref_page.index{|i| i =~ REFERENCE_START_REGEXP}+1)..ref_page.length].
       select{|i|
       i.length > 5
     }
