@@ -8,10 +8,10 @@ Gem::Specification.new do |spec|
   spec.version       = Arxiv::References::VERSION
   spec.authors       = ["Takahiro Nishimura"]
   spec.email         = ["tkhr.nishimura@gmail.com"]
-
+  
   spec.summary       = %q{This library is to fetch information of Title, Author, Abstruct and Citations from Arxiv Paper}
   spec.description   = %q{This library is for suvey.}
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.homepage      = "https://github.com/nishimuuu/Arxiv-references"
   spec.license       = "GPL"
 
   # Prevent pushing this gem to RubyGems.org by setting 'allowed_push_host', or
