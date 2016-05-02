@@ -4,6 +4,7 @@
 /_yardoc/
 /coverage/
 /doc/
-/pkg/
+pkg
 /spec/reports/
 /tmp/
+vendor/bundle
