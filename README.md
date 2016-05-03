@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/nishimuuu/Arxiv-references.svg?branch=master)](https://travis-ci.org/nishimuuu/Arxiv-references)
 [![Gem Version](https://badge.fury.io/rb/arxiv-references.svg)](https://badge.fury.io/rb/arxiv-references)
 [![LICENSES](https://img.shields.io/badge/LICENSE-GPL-blue.svg)](https://img.shields.io/badge/LICENSE-GPL-blue.svg)
 [![Code Climate](https://codeclimate.com/github/nishimuuu/Arxiv-references/badges/gpa.svg)](https://codeclimate.com/github/nishimuuu/Arxiv-references)
