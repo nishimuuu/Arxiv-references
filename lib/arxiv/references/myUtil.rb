@@ -27,7 +27,7 @@ module ArxivUtil
     if use_dir
       return "#{work_dir}/#{id}/output.pdf"
     else
-      return "#{work_dir}-#{id}-output.pdf"
+      return "#{work_dir}/#{id}-output.pdf"
     end
   end
 
@@ -35,7 +35,7 @@ module ArxivUtil
     if use_dir
       return "#{work_dir}/#{id}/output_k2opt.pdf"
     else
-      return "#{work_dir}-#{id}-output_k2opt.pdf"
+      return "#{work_dir}/#{id}-output_k2opt.pdf"
     end
   end
 
