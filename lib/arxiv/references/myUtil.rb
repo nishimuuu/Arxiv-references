@@ -58,9 +58,9 @@ module ArxivUtil
     return result.to_json
   end
 
-  def self.fetchFromArxivId(id, work_dir)
+  def self.fetchFromArxivId(id, work_dir, use_dir)
     target_url = "#{BASE_URL}/abs/#{id}" 
-    fetchFromUrl(target_url, work_dir)
+    fetchFromUrl(target_url, work_dir, use_dir)
   end
 
   def self.fetchPdfFile(pdfUrl,file_name) 
