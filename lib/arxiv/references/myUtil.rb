@@ -39,6 +39,11 @@ module ArxivUtil
     end
   end
 
+  def removeFile(id, work_dir)
+    File.delete("#{work_dir}/#{id}-output.pdf")
+    File.delete("#{work_dir}/#{id}-output_k2opt.pdf")
+  end
+
 
   def self.fetchFromUrl(urlName, work_dir, use_dir)
     puts "fetch => #{urlName}"
@@ -88,6 +93,7 @@ module ArxivUtil
     return getK2Pdf(job_id, work_dir, use_dir)
   end
 
+
   def self.fetchReference(file_name)
     reader = PDF::Reader.new(file_name)
     page_no = reader.
@@ -126,7 +132,11 @@ module ArxivUtil
     fetchPdfFile(pdfUrl, file_name)
     executed_pdf = convertSingleColPdf(job_id, work_dir, file_name, use_dir)
     references = fetchReference(executed_pdf)
-    removeDir(job_id, work_dir) unless use_dir
+    if use_dir
+    removeDir(job_id, work_dir) 
+    else
+    removeFile(job_id, work_dir)
+    end
     return references
   end
 end
