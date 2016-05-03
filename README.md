@@ -1,5 +1,7 @@
 [![Gem Version](https://badge.fury.io/rb/arxiv-references.svg)](https://badge.fury.io/rb/arxiv-references)
 [![LICENSES](https://img.shields.io/badge/LICENSE-GPL-blue.svg)](https://img.shields.io/badge/LICENSE-GPL-blue.svg)
+[![Code Climate](https://codeclimate.com/github/nishimuuu/Arxiv-references/badges/gpa.svg)](https://codeclimate.com/github/nishimuuu/Arxiv-references)
+[![Test Coverage](https://codeclimate.com/github/nishimuuu/Arxiv-references/badges/coverage.svg)](https://codeclimate.com/github/nishimuuu/Arxiv-references/coverage)
 # Arxiv::References
 
 Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/arxiv/references`. To experiment with that code, run `bin/console` for an interactive prompt.
