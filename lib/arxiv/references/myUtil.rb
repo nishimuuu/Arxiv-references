@@ -39,7 +39,7 @@ module ArxivUtil
     end
   end
 
-  def removeFile(id, work_dir)
+  def self.removeFile(id, work_dir)
     File.delete("#{work_dir}/#{id}-output.pdf")
     File.delete("#{work_dir}/#{id}-output_k2opt.pdf")
   end
@@ -133,9 +133,9 @@ module ArxivUtil
     executed_pdf = convertSingleColPdf(job_id, work_dir, file_name, use_dir)
     references = fetchReference(executed_pdf)
     if use_dir
-    removeDir(job_id, work_dir) 
+      removeDir(job_id, work_dir) 
     else
-    removeFile(job_id, work_dir)
+      removeFile(job_id, work_dir)
     end
     return references
   end
