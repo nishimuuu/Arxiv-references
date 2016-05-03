@@ -6,11 +6,20 @@
 
 Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/arxiv/references`. To experiment with that code, run `bin/console` for an interactive prompt.
 
-TODO: Delete this and the text above, and describe your gem
+## Dependencies
+
+- k2pdfopt (http://www.willus.com/k2pdfopt/)
 
 ## Installation
 
-Add this line to your application's Gemfile:
+### Install k2pdfopt
+
+1. Access [this url](http://www.willus.com/k2pdfopt/download/)
+2. Select version by OS and 32/64 bit and put CAPTHA
+3. Move to `/usr/local/bin`
+4. Confirm to use `k2pdfopt` command
+
+### Install arxiv-references
 
 ```ruby
 gem 'arxiv-references'
@@ -26,7 +35,19 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+### fetch paper information from arxiv url
+`arxiv-ref url <arxivurl>`
+
+### fetch paper information from arxiv ID
+`arxiv-ref id <arxivid>`
+
+### fetch paper citation list from PDF URL
+`arxiv-ref pdfurl <pdfurl>`
+
+### Options
+--work_dir : [default: /tmp] working directory to convert multi column pdf to one column
+--use_dir  : [default: true] create working directory or not
+
 
 ## Development
 
