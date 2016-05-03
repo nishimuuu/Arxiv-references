@@ -126,7 +126,7 @@ module ArxivUtil
 
   def self.fetchFromPdfUrl(pdfUrl, work_dir, use_dir)
     job_id = makeId
-    makeDir(job_id, work_dir) unless use_dir
+    makeDir(job_id, work_dir) if use_dir
     file_name = makeFile(job_id, work_dir, use_dir)
 
     fetchPdfFile(pdfUrl, file_name)
