@@ -55,20 +55,19 @@ module ArxivUtil
     fetchFromUrl(target_url, work_dir)
   end
 
-  def self.fetchFromPdfUrl(pdfUrl, work_dir)
-    job_id = makeId
-    makeDir(job_id, work_dir)
-    file_name = makeFile(job_id, work_dir)
-
+  def self.fetchPdfFile(pdfUrl,file_name) 
     open(file_name, 'wb') do |o|
       open(pdfUrl) do |data|
         o.write(data.read)
       end
     end
+  end
+
+  def self.convertSingleColPdf(job_id, work_dir,file_name)
     cmd = "k2pdfopt -dev kpw #{file_name}"
     PTY.spawn(cmd) do |i,o|
       o.sync = true
-      i.expect(/\S.*Enter option above \(h=help, q=quit\):/,10){|line|
+      i.expect(/\S.*Enter option above \(h=help, q=quit\):/,10){
         o.puts "\n"
         o.flush
       }
@@ -78,8 +77,11 @@ module ArxivUtil
         break unless res.index('written').nil?
       end
     end
-    executed_pdf = getK2Pdf(job_id, work_dir)
-    reader = PDF::Reader.new(executed_pdf)
+    return getK2Pdf(job_id, work_dir)
+  end
+
+  def self.fetchReference(file_name)
+    reader = PDF::Reader.new(file_name)
     page_no = reader.
       pages.
       reject{|i|
@@ -102,10 +104,20 @@ module ArxivUtil
       gsub('- ','').
       split("\n")
 
-    references = ref_page[(ref_page.index{|i| i =~ REFERENCE_START_REGEXP}+1)..ref_page.length].
+    return ref_page[(ref_page.index{|i| i =~ REFERENCE_START_REGEXP}+1)..ref_page.length].
       select{|i|
       i.length > 5
     }
+  end
+
+  def self.fetchFromPdfUrl(pdfUrl, work_dir)
+    job_id = makeId
+    makeDir(job_id, work_dir)
+    file_name = makeFile(job_id, work_dir)
+    
+    fetchPdfFile(pdfUrl, file_name)
+    executed_pdf = convertSingleColPdf(job_id, work_dir, file_name)
+    references = fetchReference(executed_pdf)
     removeDir(job_id, work_dir)
     return references
   end
