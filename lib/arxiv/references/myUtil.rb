@@ -23,16 +23,24 @@ module ArxivUtil
     FileUtils.rm_rf("#{work_dir}/#{id}")
   end
 
-  def self.makeFile(id, work_dir)
-    return "#{work_dir}/#{id}/output.pdf"
+  def self.makeFile(id, work_dir, use_dir)
+    if use_dir
+      return "#{work_dir}/#{id}/output.pdf"
+    else
+      return "#{work_dir}-#{id}-output.pdf"
+    end
   end
 
-  def self. getK2Pdf(id, work_dir)
-    return "#{work_dir}/#{id}/output_k2opt.pdf"
+  def self. getK2Pdf(id, work_dir, use_dir)
+    if use_dir
+      return "#{work_dir}/#{id}/output_k2opt.pdf"
+    else
+      return "#{work_dir}-#{id}-output_k2opt.pdf"
+    end
   end
 
 
-  def self.fetchFromUrl(urlName, work_dir)
+  def self.fetchFromUrl(urlName, work_dir, use_dir)
     puts "fetch => #{urlName}"
     charset = nil
     html = open(urlName) do |f|
@@ -46,7 +54,7 @@ module ArxivUtil
     result[:authors] = page.xpath('//*[@id="abs"]/div[2]/div[2]/a').text
     result[:abstruct] = page.xpath('//*[@id="abs"]/div[2]/blockquote').text
     result[:pdfurl] = "#{BASE_URL}#{page.xpath('//*[@id="abs"]/div[1]/div[1]/ul/li[1]/a').attr('href').value}"
-    result[:references] = fetchFromPdfUrl(result[:pdfurl], work_dir) 
+    result[:references] = fetchFromPdfUrl(result[:pdfurl], work_dir, use_dir) 
     return result.to_json
   end
 
@@ -63,7 +71,7 @@ module ArxivUtil
     end
   end
 
-  def self.convertSingleColPdf(job_id, work_dir,file_name)
+  def self.convertSingleColPdf(job_id, work_dir,file_name, use_dir)
     cmd = "k2pdfopt -dev kpw #{file_name}"
     PTY.spawn(cmd) do |i,o|
       o.sync = true
@@ -77,7 +85,7 @@ module ArxivUtil
         break unless res.index('written').nil?
       end
     end
-    return getK2Pdf(job_id, work_dir)
+    return getK2Pdf(job_id, work_dir, use_dir)
   end
 
   def self.fetchReference(file_name)
@@ -90,35 +98,35 @@ module ArxivUtil
       map(&:number).
       sort.
       shift
-    puts "Detect References page=> #{page_no} "
-    ref_page = reader.
-      pages.
-      select{|i|
-        i.number >= page_no
-      }.
-      map{|i|
-        i.text.gsub(/\n+/,"\n").gsub(/ +/,' ')
-      }.
-      join(' ').
-      gsub(REFERENCE_REGEXP,"\n\\1").
-      gsub('- ','').
-      split("\n")
+      puts "Detect References page=> #{page_no} "
+      ref_page = reader.
+        pages.
+        select{|i|
+          i.number >= page_no
+        }.
+        map{|i|
+          i.text.gsub(/\n+/,"\n").gsub(/ +/,' ')
+        }.
+        join(' ').
+        gsub(REFERENCE_REGEXP,"\n\\1").
+        gsub('- ','').
+        split("\n")
 
-    return ref_page[(ref_page.index{|i| i =~ REFERENCE_START_REGEXP}+1)..ref_page.length].
-      select{|i|
-      i.length > 5
-    }
+        return ref_page[(ref_page.index{|i| i =~ REFERENCE_START_REGEXP}+1)..ref_page.length].
+          select{|i|
+          i.length > 5
+        }
   end
 
-  def self.fetchFromPdfUrl(pdfUrl, work_dir)
+  def self.fetchFromPdfUrl(pdfUrl, work_dir, use_dir)
     job_id = makeId
-    makeDir(job_id, work_dir)
-    file_name = makeFile(job_id, work_dir)
-    
+    makeDir(job_id, work_dir) unless use_dir
+    file_name = makeFile(job_id, work_dir, use_dir)
+
     fetchPdfFile(pdfUrl, file_name)
-    executed_pdf = convertSingleColPdf(job_id, work_dir, file_name)
+    executed_pdf = convertSingleColPdf(job_id, work_dir, file_name, use_dir)
     references = fetchReference(executed_pdf)
-    removeDir(job_id, work_dir)
+    removeDir(job_id, work_dir) unless use_dir
     return references
   end
 end
