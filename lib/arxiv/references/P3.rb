@@ -88,10 +88,9 @@ class P3
         ref_page.shift
         ref_page.
         join(' ').
-        split("\n").
-        join(' ').
         gsub(REFERENCE_REGEXP,"\n\\1").
-        split("\n").
+        split(/\n *\n/).
+        map{|i| i.gsub("\n",'')}.
         select{|i| i.length > 15}
       return ref_page
   end
