@@ -7,7 +7,7 @@ require 'pdf-reader'
 
 class P3
   BASE_URL = "https://arxiv.org"
-  REFERENCE_START_REGEXP = Regexp.new('[rR][eE][fF][eE][rR][eE][nN][cC][eE][sS]*')
+  REFERENCE_START_REGEXP = Regexp.new('\n*[rR][eE][fF][eE][rR][eE][nN][cC][eE][sS]?( +|\n+)?$')
   REFERENCE_REGEXP = Regexp.new('(\[[0-9]?[0-9]\]|\[.+?\])')
   def self.makeId
     return Digest::SHA256.hexdigest Time.now.strftime("%F %H:%M:%S")
@@ -84,7 +84,9 @@ class P3
         }.
         map{|i|
           i.text.gsub(/\n\n+/,"\n").gsub(/ +/,' ').gsub(/-\n +/,'')
-        }.
+        }
+        ref_page.shift
+        ref_page.
         join(' ').
         split("\n").
         join(' ').
