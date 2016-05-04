@@ -1,5 +1,5 @@
 module Arxiv
   module References
-    VERSION = "0.1.6.5"
+    VERSION = "0.1.7.0"
   end
 end

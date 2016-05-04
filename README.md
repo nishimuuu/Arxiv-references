@@ -52,8 +52,8 @@ Or install it yourself as:
 
 ### Options
 --work_dir : [default: /tmp] working directory to convert multi column pdf to one column
---use_dir  : [default: true] create working directory or not
-
+--dir  : [default: true] create working directory or not
+--pdf   : [default: false] if you don't need citations list, add option `--no-pdf`
 
 ## Development
 

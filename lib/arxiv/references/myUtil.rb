@@ -7,6 +7,7 @@ require 'expect'
 require 'pdf-reader'
 require 'nokogiri'
 require 'json'
+
 module ArxivUtil
   BASE_URL = "https://arxiv.org"
   REFERENCE_START_REGEXP = Regexp.new('References|REFERENCES|Reference|REFERENCE')
@@ -45,7 +46,7 @@ module ArxivUtil
   end
 
 
-  def self.fetchFromUrl(urlName, work_dir, use_dir)
+  def self.fetchFromUrl(urlName, work_dir, use_dir, use_pdf)
     puts "fetch => #{urlName}"
     charset = nil
     html = open(urlName) do |f|
@@ -55,17 +56,17 @@ module ArxivUtil
 
     page = Nokogiri::HTML.parse(html, nil, charset)
     result = {}
-    result[:title] = page.xpath('//*[@id="abs"]/div[2]/h1').text
-    result[:authors] = page.xpath('//*[@id="abs"]/div[2]/div[2]/a').text
-    result[:abstruct] = page.xpath('//*[@id="abs"]/div[2]/blockquote').text
+    result[:title] = page.xpath('//*[@id="abs"]/div[2]/h1').children.select{|i| i.name=='text'}.shift.text.gsub(/\n/,'')
+    result[:authors] = page.xpath('//*[@id="abs"]/div[2]/div[2]/a').map(&:text)
+    result[:abstruct] = page.xpath('//*[@id="abs"]/div[2]/blockquote').children.select{|i| i.name = 'text'}.reverse.shift.text
     result[:pdfurl] = "#{BASE_URL}#{page.xpath('//*[@id="abs"]/div[1]/div[1]/ul/li[1]/a').attr('href').value}"
-    result[:references] = fetchFromPdfUrl(result[:pdfurl], work_dir, use_dir) 
-    return result.to_json
+    result[:references] = fetchFromPdfUrl(result[:pdfurl], work_dir, use_dir) if use_pdf
+    return result
   end
 
-  def self.fetchFromArxivId(id, work_dir, use_dir)
+  def self.fetchFromArxivId(id, work_dir, use_dir, use_pdf)
     target_url = "#{BASE_URL}/abs/#{id}" 
-    fetchFromUrl(target_url, work_dir, use_dir)
+    fetchFromUrl(target_url, work_dir, use_dir, use_pdf)
   end
 
   def self.fetchPdfFile(pdfUrl,file_name) 
