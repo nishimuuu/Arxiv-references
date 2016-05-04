@@ -4,7 +4,7 @@ require 'thor'
 require 'pathname'
 lib = Pathname.new(__FILE__).dirname.join().expand_path
 $:.unshift lib.to_s
-require 'myUtil'
+require 'ArxivUtil'
 require 'json'
 
 

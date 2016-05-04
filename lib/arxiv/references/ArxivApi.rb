@@ -2,14 +2,14 @@ require 'open-uri'
 require 'nokogiri'
 require 'json'
 
-class Arxiv
+class ArxivApi
   attr_reader :title, :authors, :abstruct, :pdfurl
   attr_accessor :references
   BASE_URL = 'https://arxiv.org'
   def initialize(id)
-    url = "#{BASE_URL}/abs/#{id}" if id.index('http').nil?
+    id = "#{BASE_URL}/abs/#{id}" if id.index('http').nil?
     charset = nil
-    html = open(url) do |f|
+    html = open(id) do |f|
       charset = f.charset
       f.read
     end
@@ -36,6 +36,11 @@ class Arxiv
   def fetch_pdfurl
     "#{BASE_URL}#{@page.xpath('//*[@id="abs"]/div[1]/div[1]/ul/li[1]/a').attr('href').value}"
   end
+
+  def to_json
+    JSON.pretty_generate({title: @title, authors: @authors, abstruct: @abstruct, pdfurl: @pdfurl, references: @references})
+  end
+
 end
 
 

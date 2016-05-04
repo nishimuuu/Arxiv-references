@@ -4,7 +4,6 @@ lib = Pathname.new(__FILE__).dirname.join().expand_path.to_s
 $:.unshift lib
 
 require "references/version"
-require 'references/myUtil'
 require 'references/ArxivReferences'
 module Arxiv
   module References

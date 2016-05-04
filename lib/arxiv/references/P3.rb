@@ -1,16 +1,13 @@
-require 'open-uri'
 require 'digest/sha2'
 require 'time'
 require 'fileutils'
 require 'pty'
 require 'expect'
 require 'pdf-reader'
-require 'nokogiri'
-require 'json'
 
-module ArxivUtil
+class P3
   BASE_URL = "https://arxiv.org"
-  REFERENCE_START_REGEXP = Regexp.new('References|REFERENCES|Reference|REFERENCE')
+  REFERENCE_START_REGEXP = Regexp.new('[rR][eE][fF][eE][rR][eE][nN][cC][eE][sS]*')
   REFERENCE_REGEXP = Regexp.new('(\[[0-9]?[0-9]\]|\[.+?\])')
   def self.makeId
     return Digest::SHA256.hexdigest Time.now.strftime("%F %H:%M:%S")
@@ -44,31 +41,6 @@ module ArxivUtil
     File.delete("#{work_dir}/#{id}-output.pdf")
     File.delete("#{work_dir}/#{id}-output_k2opt.pdf")
   end
-
-
-  def self.fetchFromUrl(urlName, work_dir, use_dir, use_pdf)
-    puts "fetch => #{urlName}"
-    charset = nil
-    html = open(urlName) do |f|
-      charset = f.charset
-      f.read
-    end
-
-    page = Nokogiri::HTML.parse(html, nil, charset)
-    result = {}
-    result[:title] = page.xpath('//*[@id="abs"]/div[2]/h1').children.select{|i| i.name=='text'}.shift.text.gsub(/\n/,'')
-    result[:authors] = page.xpath('//*[@id="abs"]/div[2]/div[2]/a').map(&:text)
-    result[:abstruct] = page.xpath('//*[@id="abs"]/div[2]/blockquote').children.select{|i| i.name = 'text'}.reverse.shift.text
-    result[:pdfurl] = "#{BASE_URL}#{page.xpath('//*[@id="abs"]/div[1]/div[1]/ul/li[1]/a').attr('href').value}"
-    result[:references] = fetchFromPdfUrl(result[:pdfurl], work_dir, use_dir) if use_pdf
-    return result
-  end
-
-  def self.fetchFromArxivId(id, work_dir, use_dir, use_pdf)
-    target_url = "#{BASE_URL}/abs/#{id}" 
-    fetchFromUrl(target_url, work_dir, use_dir, use_pdf)
-  end
-
   def self.fetchPdfFile(pdfUrl,file_name) 
     open(file_name, 'wb') do |o|
       open(pdfUrl) do |data|
@@ -94,7 +66,6 @@ module ArxivUtil
     return getK2Pdf(job_id, work_dir, use_dir)
   end
 
-
   def self.fetchReference(file_name)
     reader = PDF::Reader.new(file_name)
     page_no = reader.
@@ -105,27 +76,25 @@ module ArxivUtil
       map(&:number).
       sort.
       shift
-      puts "Detect References page=> #{page_no} "
+
       ref_page = reader.
         pages.
         select{|i|
           i.number >= page_no
         }.
         map{|i|
-          i.text.gsub(/\n+/,"\n").gsub(/ +/,' ')
+          i.text.gsub(/\n\n+/,"\n").gsub(/ +/,' ').gsub(/-\n +/,'')
         }.
         join(' ').
+        split("\n").
+        join(' ').
         gsub(REFERENCE_REGEXP,"\n\\1").
-        gsub('- ','').
-        split("\n")
-
-        return ref_page[(ref_page.index{|i| i =~ REFERENCE_START_REGEXP}+1)..ref_page.length].
-          select{|i|
-          i.length > 5
-        }
+        split("\n").
+        select{|i| i.length > 15}
+      return ref_page
   end
 
-  def self.fetchFromPdfUrl(pdfUrl, work_dir, use_dir)
+  def self.fetchFromPdfUrl(pdfUrl, work_dir=true, use_dir=true)
     job_id = makeId
     makeDir(job_id, work_dir) if use_dir
     file_name = makeFile(job_id, work_dir, use_dir)
