@@ -85,10 +85,14 @@ class P3
         map{|i|
           i.text.gsub(/\n\n+/,"\n").gsub(/ +/,' ').gsub(/-\n +/,'')
         }
+
         ref_page.shift
-        ref_page.
+
+        ref_page = ref_page.
         join(' ').
-        gsub(REFERENCE_REGEXP,"\n\\1").
+        gsub(REFERENCE_REGEXP,"\n\\1")
+
+        ref_page = ref_page.
         split(/\n *\n/).
         map{|i| i.gsub("\n",'')}.
         select{|i| i.length > 15}
