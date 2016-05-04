@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Takahiro Nishimura"]
   spec.email         = ["tkhr.nishimura@gmail.com"]
   
-  spec.summary       = %q{This library is to fetch information of Title, Author, Abstruct and Citations from Arxiv Paper}
-  spec.description   = %q{This library is for suvey.}
+  spec.summary       = %q{This library is to fetch title, author, abstruct and etc. of paper in arXiv. Moreover, analyze pdf file to fetch citation list in paper}
+  spec.description   = %q{Fetch title, author, abstruct, and citations list of paper in arXiv from pdf file}
   spec.homepage      = "https://github.com/nishimuuu/Arxiv-references"
   spec.license       = "GPL"
 
