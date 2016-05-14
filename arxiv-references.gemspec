@@ -33,4 +33,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'thor', "~> 0.19"
   spec.add_dependency 'pdf-reader', "~> 1.4"
   spec.add_dependency 'nokogiri', "~> 1.6"
+  spec.add_dependency 'paper-pdf-parser', "~> 0.1"
 end

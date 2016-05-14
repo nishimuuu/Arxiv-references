@@ -1,7 +1,7 @@
 
 $:.unshift Pathname.new(__FILE__).dirname.join().expand_path.to_s
 require 'ArxivApi'
-require 'P3'
+require 'paper/pdf/parser/p3'
 
 
 module ArxivUtil
